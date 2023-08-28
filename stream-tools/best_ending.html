@@ -9,47 +9,70 @@
         7. Resize as necessary (may want to set scale filtering)
         8. Right click the new browser source, pick interact
         9. Use the interact window to track the run. It can be resized.
+        10. (optional) configure css vars below as you like
  -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
+    <title>Boku1 Best Ending Tracker</title>
     <style>
+        :root {
+            /* global/default vars */
+            --page-font-family: Arial, Helvetica, sans-serif;
+            --page-background-color: rgb(0, 0, 0);
+            --page-font-color: rgba(255, 255, 255, 255);
+            --page-font-size: 18pt;
+            
+            /* tracker (upper section) vars */
+            --trk-stream-text-color: rgba(255, 255, 255, 255);
+            --trk-stream-bg-color: rgba(0, 0, 0);
+            --trk-stream-font-size: 28pt;
+            --trk-good-text-color: lightgreen;
+            --trk-bad-text-color: crimson;
+
+            /* controls (lower section) vars */
+            --ctl-button-font-size: 12pt;
+            --ctl-label-font-size: 16pt;
+            --ctl-button-font-weight: bold;
+            --ctl-value-font-size: 14pt;
+            --ctl-divider-color: rgba(255, 255, 255, 255)
+        }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: rgb(0, 0, 0);
+            font-family: var(--page-font-family);
+            background-color: var(--page-background-color);
             margin: 0px auto;
-            color: rgba(255, 255, 255, 255);
-            font-size: 18pt;
+            color: var(--page-font-color);
+            font-size: var(--page-font-size);
             height: 100%;
             width: 100%;
             overflow: hidden;
         }
 
         .stream-table {
-            /* width: 350px; */
             flex-grow: 1;
-            font-size: 32pt;
+            font-size: var(--trk-stream-font-size);
+            background-color: var(--trk-stream-bg-color);
+            color: var(--trk-stream-text-color)
         }
 
         .ctl-btn {
-            min-width: 1.5rem;
-            min-height: 1.5rem;
-            font-size: 12pt;
+            min-width: 1.75rem;
+            min-height: 1.75rem;
+            font-size: var(--ctl-button-font-size);
             align-self: center;
-            font-weight: bold;
+            font-weight: var(--ctl-button-font-weight);
         }
 
         .textval {
             margin-right: 0.25rem;
             margin-left: 0.25rem;
-            font-size: 28pt;
             flex-grow: 0;
         }
 
         .texttitle {
-            font-size: 28pt;
             margin-left: 0.25rem;
         }
 
@@ -71,11 +94,11 @@
         }
 
         .good {
-            color: lightgreen;
+            color: var(--trk-good-text-color);
         }
 
         .bad {
-            color: crimson;
+            color: var(--trk-bad-text-color);
         }
 
         button {
@@ -93,12 +116,13 @@
         .control-group {
             margin-bottom: 1rem;
         }
+
         .control-header {
             margin-bottom: 0.5rem;
         }
 
-        .control-header > label {
-            font-size: 16pt;
+        .control-header>label {
+            font-size: var(--ctl-label-font-size);
         }
 
         .control-row {
@@ -112,7 +136,7 @@
         }
 
         .control-inputs {
-            font-size: 14pt;
+            font-size: var(--ctl-value-font-size);
         }
 
         .space-between {
@@ -145,7 +169,9 @@
         #tracker-controls {
             margin-left: .5rem;
             margin-right: .5rem;
-            border-top: 4px solid rgba(255, 255, 255, 255);
+            border-top-width: 4px;
+            border-top-style: solid;
+            border-top-color: var(--ctl-divider-color);
         }
     </style>
     <script type="text/javascript">
@@ -202,6 +228,19 @@
             wateredToday = watered;
         }
 
+        function swapSumoAndFlowers(flowersFirst = false) {
+            const sumoRow = document.getElementById("trk-sumo-wins-row");
+            const flowersRow = document.getElementById("trk-flowers-watered-row");
+            if (sumoRow && flowersRow) {
+                const parent = sumoRow.parentNode;
+                if (flowersFirst) {
+                    parent.insertBefore(flowersRow, sumoRow);
+                } else {
+                    parent.insertBefore(sumoRow, flowersRow);
+                }
+            }
+        }
+
         function onDayChanged(oldDay, newDay) {
             currentDay = newDay;
             wateredToday = false;
@@ -209,8 +248,10 @@
             if (se) {
                 if ((oldDay < 3 || oldDay > 18) && (newDay >= 3 && newDay <= 18)) {
                     se.classList.remove("hidden")
+                    swapSumoAndFlowers(true)
                 } else if ((oldDay >= 3 && oldDay <= 18) && (newDay < 3 || newDay > 18)) {
                     se.classList.add("hidden")
+                    swapSumoAndFlowers(false)
                 }
             }
             setInnerTextById("curr-date", formatDate(newDay));
@@ -279,7 +320,7 @@
         function onNextDayClick(e) {
             if (currentDay < 31) {
                 onDayChanged(currentDay, currentDay + 1);
-            } 
+            }
         }
 
         function onPrevDayClick(e) {
@@ -297,8 +338,6 @@
             onResetClick()
         });
     </script>
-    <link rel="stylesheet" href="boku-ps1-best-ending.css" />
-    <script type="module" src="boku-ps1-best-ending.ts"></script>
 </head>
 
 <body>
@@ -312,7 +351,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr id="trk-flowers-watered-row">
                     <td>
                         <div id="flowers-watered-cell" class="space-between watered-text hidden">
                             <strong class="texttitle">Watered:</strong>
@@ -320,7 +359,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr id="trk-sumo-wins-row">
                     <td>
                         <div class="flex-space-between-cell hidden" id="sumo-win-container">
                             <strong class="texttitle">Sumo Wins:</strong>
