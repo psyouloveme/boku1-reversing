@@ -1,0 +1,284 @@
+SystemID PSX
+035F46	b	h	0	MainRAM	Changed to 1 after leaving the screen with the shirabe photo
+035F2C	b	h	0	MainRAM	
+035F19	b	h	0	MainRAM	
+035F18	b	h	0	MainRAM	
+035F17	b	h	0	MainRAM	
+035F16	b	h	0	MainRAM	
+035E5E	b	h	0	MainRAM	
+035F2D	b	h	0	MainRAM	
+035F48	b	h	0	MainRAM	
+035F47	b	h	0	MainRAM	Changed to 1after dinner after shirabe 2
+035F45	b	h	0	MainRAM	
+035F44	b	h	0	MainRAM	
+035F43	b	h	0	MainRAM	
+035F42	b	h	0	MainRAM	
+035F41	b	h	0	MainRAM	
+035F40	b	h	0	MainRAM	
+035F3F	b	h	0	MainRAM	Changed to 1 when entering room 5th night
+035F3E	b	h	0	MainRAM	
+035F3D	b	h	0	MainRAM	
+035F3C	b	h	0	MainRAM	
+035F3B	b	h	0	MainRAM	
+035F3A	b	h	0	MainRAM	
+035F39	b	h	0	MainRAM	
+035F38	b	h	0	MainRAM	Changed to 1 after the clouds movie played
+035F37	b	h	0	MainRAM	
+035F35	w	h	0	MainRAM	Changed to 20 after taking the photo with Shirabe at the sunflowers
+035F34	b	h	0	MainRAM	
+035F33	b	h	0	MainRAM	
+035F32	b	h	0	MainRAM	
+035F31	b	h	0	MainRAM	
+035F30	b	h	0	MainRAM	
+035F2F	b	h	0	MainRAM	
+035F2E	b	h	0	MainRAM	Changed to 2 when entering firefly area on 5th night
+035F2B	b	h	0	MainRAM	
+035F2A	b	h	0	MainRAM	
+035F29	b	h	0	MainRAM	
+035F28	b	h	0	MainRAM	
+035F27	b	h	0	MainRAM	
+035F26	b	h	0	MainRAM	
+035F25	b	h	0	MainRAM	
+035F24	b	h	0	MainRAM	
+035F23	b	h	0	MainRAM	
+035F22	b	h	0	MainRAM	
+035F21	b	h	0	MainRAM	
+035F20	b	h	0	MainRAM	
+035F1F	b	h	0	MainRAM	
+035F1E	b	h	0	MainRAM	
+035F1D	b	h	0	MainRAM	Changed to 1 when opening journal
+035F1C	b	h	0	MainRAM	
+035F1B	b	h	0	MainRAM	
+035F1A	b	h	0	MainRAM	
+035F15	b	h	0	MainRAM	
+035F14	b	h	0	MainRAM	Changed when meeting Shirabe at the honeysuckles
+035F13	b	h	0	MainRAM	
+035F12	b	h	0	MainRAM	
+035F11	b	h	0	MainRAM	
+035F10	b	h	0	MainRAM	
+035F0F	b	h	0	MainRAM	
+035F0E	b	h	0	MainRAM	
+035F0D	b	h	0	MainRAM	
+035F0C	b	h	0	MainRAM	
+035F0B	b	h	0	MainRAM	
+035F0A	b	h	0	MainRAM	
+035F09	b	h	0	MainRAM	
+035F08	b	h	0	MainRAM	
+035F07	b	h	0	MainRAM	
+035F06	b	h	0	MainRAM	
+035F05	b	h	0	MainRAM	
+035F04	b	h	0	MainRAM	
+035F03	b	h	0	MainRAM	
+035F02	b	h	0	MainRAM	
+035F01	b	h	0	MainRAM	
+035F00	b	h	0	MainRAM	
+035EFF	b	h	0	MainRAM	
+035EFE	b	h	0	MainRAM	
+035EFD	b	h	0	MainRAM	
+035EFC	b	h	0	MainRAM	
+035EFB	b	h	0	MainRAM	
+035EFA	b	h	0	MainRAM	
+035EF9	b	h	0	MainRAM	
+035EF8	b	h	0	MainRAM	
+035EF7	b	h	0	MainRAM	
+035EF6	b	h	0	MainRAM	
+035EF5	b	h	0	MainRAM	
+035EF4	b	h	0	MainRAM	
+035EF3	b	h	0	MainRAM	
+035EF2	b	h	0	MainRAM	
+035EF1	b	h	0	MainRAM	
+035EF0	b	h	0	MainRAM	
+035EEF	b	h	0	MainRAM	
+035EEE	b	h	0	MainRAM	
+035EED	b	h	0	MainRAM	
+035EEC	b	h	0	MainRAM	
+035EEB	b	h	0	MainRAM	
+035EEA	b	h	0	MainRAM	
+035EE9	b	h	0	MainRAM	
+035EE8	b	h	0	MainRAM	
+035EE7	b	h	0	MainRAM	
+035EE6	b	h	0	MainRAM	
+035EE5	b	h	0	MainRAM	
+035EE4	b	h	0	MainRAM	
+035EE3	b	h	0	MainRAM	
+035EE2	b	h	0	MainRAM	
+035EE1	b	h	0	MainRAM	
+035EE0	b	h	0	MainRAM	
+035EDF	b	h	0	MainRAM	
+035EDE	b	h	0	MainRAM	
+035EDD	b	h	0	MainRAM	
+035EDC	b	h	0	MainRAM	
+035EDB	b	h	0	MainRAM	
+035EDA	b	h	0	MainRAM	
+035ED9	b	h	0	MainRAM	
+035ED8	b	h	0	MainRAM	
+035ED7	b	h	0	MainRAM	
+035ED6	b	h	0	MainRAM	
+035ED5	b	h	0	MainRAM	
+035ED4	b	h	0	MainRAM	
+035ED3	b	h	0	MainRAM	
+035ED2	b	h	0	MainRAM	
+035ED1	b	h	0	MainRAM	
+035ED0	b	h	0	MainRAM	
+035ECF	b	h	0	MainRAM	
+035ECE	b	h	0	MainRAM	
+035ECD	b	h	0	MainRAM	
+035ECC	b	h	0	MainRAM	
+035ECB	b	h	0	MainRAM	
+035ECA	b	h	0	MainRAM	
+035EC9	b	h	0	MainRAM	
+035EC8	b	h	0	MainRAM	
+035EC7	b	h	0	MainRAM	
+035EC6	b	h	0	MainRAM	
+035EC5	b	h	0	MainRAM	
+035EC4	b	h	0	MainRAM	
+035EC3	b	h	0	MainRAM	
+035EC2	b	h	0	MainRAM	
+035EC1	b	h	0	MainRAM	
+035EC0	b	h	0	MainRAM	
+035EBF	b	h	0	MainRAM	
+035EBE	b	h	0	MainRAM	
+035EBD	b	h	0	MainRAM	
+035EBC	b	h	0	MainRAM	
+035EBB	b	h	0	MainRAM	
+035EBA	b	h	0	MainRAM	
+035EB9	b	h	0	MainRAM	
+035EB8	b	h	0	MainRAM	
+035EB7	b	h	0	MainRAM	
+035EB6	b	h	0	MainRAM	
+035EB5	b	h	0	MainRAM	
+035EB4	b	h	0	MainRAM	
+035EB3	b	h	0	MainRAM	
+035EB2	b	h	0	MainRAM	
+035EB1	b	h	0	MainRAM	
+035EB0	b	h	0	MainRAM	
+035EAF	b	h	0	MainRAM	
+035EAE	b	h	0	MainRAM	
+035EAD	b	h	0	MainRAM	
+035EAC	b	h	0	MainRAM	
+035EAB	b	h	0	MainRAM	
+035EAA	b	h	0	MainRAM	
+035EA9	b	h	0	MainRAM	
+035EA8	b	h	0	MainRAM	
+035EA7	b	h	0	MainRAM	
+035EA6	b	h	0	MainRAM	
+035EA5	b	h	0	MainRAM	
+035EA4	b	h	0	MainRAM	
+035EA3	b	h	0	MainRAM	
+035EA2	b	h	0	MainRAM	
+035EA1	b	h	0	MainRAM	
+035EA0	b	h	0	MainRAM	
+035E9F	b	h	0	MainRAM	
+035E9E	b	h	0	MainRAM	
+035E9D	b	h	0	MainRAM	
+035E9C	b	h	0	MainRAM	
+035E9B	b	h	0	MainRAM	
+035E9A	b	h	0	MainRAM	
+035E99	b	h	0	MainRAM	
+035E98	b	h	0	MainRAM	
+035E97	b	h	0	MainRAM	
+035E96	b	h	0	MainRAM	
+035E95	b	h	0	MainRAM	
+035E94	b	h	0	MainRAM	
+035E93	b	h	0	MainRAM	
+035E92	b	h	0	MainRAM	Changed to 1 morning of the 6th
+035E91	b	h	0	MainRAM	
+035E90	b	h	0	MainRAM	Changed to 5 morning after shirabe 2
+035E8F	b	h	0	MainRAM	
+035E8E	b	h	0	MainRAM	
+035E8D	b	h	0	MainRAM	
+035E8C	b	h	0	MainRAM	
+035E8B	b	h	0	MainRAM	
+035E8A	b	h	0	MainRAM	
+035E89	b	h	0	MainRAM	
+035E88	b	h	0	MainRAM	
+035E87	b	h	0	MainRAM	
+035E86	b	h	0	MainRAM	
+035E85	b	h	0	MainRAM	
+035E84	b	h	0	MainRAM	Changed to 1 after the end of shirabe 2
+035E83	b	h	0	MainRAM	Changed to 1 after meeting shirabe on the beach
+035E82	b	h	0	MainRAM	Changed after shirabe by the sf field
+035E81	b	h	0	MainRAM	Changed to 1 after first shirabe on the 13th
+035E80	b	h	0	MainRAM	Changed to 1 after ghost wolf past the chop tree
+035E7F	b	h	0	MainRAM	
+035E7E	b	h	0	MainRAM	Changed to 1 after seeing the beetle tree near sf
+035E7D	b	h	0	MainRAM	
+035E7C	b	h	0	MainRAM	
+035E7B	b	h	0	MainRAM	
+035E7A	b	h	0	MainRAM	
+035E79	b	h	0	MainRAM	
+035E78	b	h	0	MainRAM	
+035E77	b	h	0	MainRAM	
+035E76	b	h	0	MainRAM	
+035E75	b	h	0	MainRAM	
+035E74	b	h	0	MainRAM	
+035E73	b	h	0	MainRAM	
+035E72	b	h	0	MainRAM	
+035E71	b	h	0	MainRAM	
+035E70	b	h	0	MainRAM	
+035E6F	b	h	0	MainRAM	
+035E6E	b	h	0	MainRAM	
+035E6D	b	h	0	MainRAM	
+035E6C	b	h	0	MainRAM	
+035E6B	b	h	0	MainRAM	
+035E6A	b	h	0	MainRAM	
+035E69	b	h	0	MainRAM	
+035E68	b	h	0	MainRAM	
+035E67	b	h	0	MainRAM	
+035E66	b	h	0	MainRAM	
+035E65	b	h	0	MainRAM	
+035E64	b	h	0	MainRAM	
+035E63	b	h	0	MainRAM	
+035E62	b	h	0	MainRAM	Changed to 1 when entering firefly area on 5th night, 2 on the 6th morning
+035E61	b	h	0	MainRAM	
+035E60	b	h	0	MainRAM	
+035E5F	b	h	0	MainRAM	
+035E5D	b	h	0	MainRAM	Changed to 1 after taking the photo with Shirabe at the sunflowers
+035E5C	b	h	0	MainRAM	Changed to 1 after meeting Shirabe at the honeysuckles
+035E5B	b	h	0	MainRAM	
+035E5A	b	h	0	MainRAM	
+035E59	b	h	0	MainRAM	
+035E58	b	h	0	MainRAM	
+035E57	b	h	0	MainRAM	
+035E56	b	h	0	MainRAM	
+035E55	b	h	0	MainRAM	
+035E54	b	h	0	MainRAM	
+035E53	b	h	0	MainRAM	
+035E52	b	h	0	MainRAM	Changed when picking up rod?
+035E51	b	h	0	MainRAM	
+035E50	b	h	0	MainRAM	
+035E4F	b	h	0	MainRAM	
+035E4E	b	h	0	MainRAM	Changed to 1 after watering on the 5th
+035E4D	b	h	0	MainRAM	
+035E4C	b	h	0	MainRAM	
+035E4B	b	h	0	MainRAM	
+035E4A	b	h	0	MainRAM	
+035E49	b	h	0	MainRAM	Changed to 3 after morning of post shirabe 2
+035E48	b	h	0	MainRAM	
+0	S	_	1		
+03E098	b	u	0	MainRAM	active bug type
+03E099	b	u	0	MainRAM	active bug size
+03E09A	b	u	0	MainRAM	active bug lost
+03E09B	b	u	0	MainRAM	active bug size indicator
+03E09C	b	u	0	MainRAM	active bug catch num
+03E09D	b	u	0	MainRAM	active bug catch day
+03E09E	b	u	0	MainRAM	active bug wins
+03E09F	b	u	0	MainRAM	active bug losses
+03E0A0	b	h	0	MainRAM	active bug secretstat
+03E0A1	b	u	0	MainRAM	active bug idk
+03E0A2	b	u	0	MainRAM	active bug idk2
+03E0A3	b	u	0	MainRAM	active bug idk3
+0	S	_	1		
+045A1C	b	u	0	MainRAM	bug inv type
+045A1D	b	u	0	MainRAM	bug inv size
+045A1E	b	u	0	MainRAM	bug inv lost
+045A1F	b	u	0	MainRAM	bug inv size indicator
+045A20	b	u	0	MainRAM	bug inv catch num
+045A21	b	u	0	MainRAM	bug inv catch day
+045A22	b	u	0	MainRAM	bug inv wins
+045A23	b	u	0	MainRAM	bug inv losses
+045A24	b	u	0	MainRAM	bug inv secretstat
+045A25	b	u	0	MainRAM	bug inv idk
+045A26	b	u	0	MainRAM	bug inv idk2
+045A27	b	u	0	MainRAM	bug inv idk3
+

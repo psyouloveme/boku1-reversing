@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: rgb(0, 0, 0);
+            margin: 0px auto;
+            color: rgba(255, 255, 255, 255);
+            font-size: 18pt;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .stream-table {
+            /* width: 350px; */
+            flex-grow: 1;
+            font-size: 32pt;
+        }
+
+        .ctl-btn {
+            min-width: 1.5rem;
+            min-height: 1.5rem;
+            font-size: 12pt;
+            align-self: center;
+            font-weight: bold;
+        }
+
+        .textval {
+            margin-right: 0.25rem;
+            margin-left: 0.25rem;
+            font-size: 28pt;
+            flex-grow: 0;
+        }
+
+        .texttitle {
+            font-size: 28pt;
+            margin-left: 0.25rem;
+        }
+
+        .flex-center-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-space-between-cell {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        .hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .good {
+            color: lightgreen;
+        }
+
+        .bad {
+            color: crimson;
+        }
+
+        button {
+            height: 1.5rem;
+            min-width: 1.5rem;
+        }
+
+        .control-col {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin-top: .55rem;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        .control-header {
+            margin-bottom: 0.5rem;
+        }
+
+        .control-header > label {
+            font-size: 16pt;
+        }
+
+        .control-row {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
+
+        .control-row-col {
+            margin-right: 0.25rem;
+        }
+
+        .control-inputs {
+            font-size: 14pt;
+        }
+
+        .space-between {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        .align-end {
+            align-self: end;
+        }
+
+        .grow {
+            flex-grow: 1;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        #tracker-controls {
+            margin-left: .5rem;
+            margin-right: .5rem;
+            border-top: 4px solid rgba(255, 255, 255, 255);
+        }
+    </style>
+    <script type="text/javascript">
+        let sumoWins = 0;
+        let currentDay = 1;
+        let wateredToday = false;
+
+        const formatOpts = {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            timeZone: "Asia/Tokyo",
+        };
+
+        function formatDate(dayOfMonth) {
+            let dateToFormat;
+            if (!dayOfMonth) {
+                dateToFormat = new Date(Date.UTC(1975, 6, 31, 15, 0, 0));
+            } else if (dayOfMonth === 1) {
+                dateToFormat = new Date(Date.UTC(1975, 6, 31, 15, 0, 0));
+            } else {
+                dateToFormat = new Date(Date.UTC(1975, 7, dayOfMonth - 1, 15, 0, 0));
+            }
+
+            return dateToFormat.toLocaleDateString("en-US", formatOpts);
+        }
+
+        function setInnerTextById(id, text) {
+            if (id) {
+                const elem = document.getElementById(id);
+                if (elem) {
+                    elem.innerText = text;
+                }
+                return elem
+            }
+            return null
+        }
+
+        function updateWatered(watered) {
+            const innerElem = document.getElementById("flowers-watered-today")
+            if (innerElem) {
+                if (watered === true) {
+                    innerElem.innerText = "Yes"
+                    innerElem.classList.remove("bad")
+                    innerElem.classList.add("good")
+                    setInnerTextById('flowers-watered-today-ctl', "Yes")
+                } else {
+                    innerElem.innerText = "No"
+                    innerElem.classList.remove("good")
+                    innerElem.classList.add("bad")
+                    setInnerTextById('flowers-watered-today-ctl', "No")
+                }
+            }
+            wateredToday = watered;
+        }
+
+        function onDayChanged(oldDay, newDay) {
+            currentDay = newDay;
+            wateredToday = false;
+            const se = document.getElementById("flowers-watered-cell");
+            if (se) {
+                if ((oldDay < 3 || oldDay > 18) && (newDay >= 3 && newDay <= 18)) {
+                    se.classList.remove("hidden")
+                } else if ((oldDay >= 3 && oldDay <= 18) && (newDay < 3 || newDay > 18)) {
+                    se.classList.add("hidden")
+                }
+            }
+            setInnerTextById("curr-date", formatDate(newDay));
+            setInnerTextById("curr-date-ctl", formatDate(newDay).split(',')[0]);
+            updateWatered();
+        }
+
+        function onSumoChanged(oldWins, newWins) {
+            let sumoChanged = false;
+            if (oldWins !== newWins) {
+                sumoWins = newWins;
+                const se = document.getElementById("sumo-win-count");
+                const ct = document.getElementById("sumo-win-count-ctl");
+                if (se && ct) {
+                    se.innerText = newWins.toString();
+                    ct.innerText = newWins.toString();
+                    if (newWins >= 45) {
+                        se.classList.add('good');
+                        ct.classList.add('good')
+                    } else {
+                        se.classList.remove('good');
+                        ct.classList.remove('good')
+                    }
+                }
+                const sl = document.getElementById("sumo-level");
+                if (sl) {
+                    if (newWins < 10) {
+                        setInnerTextById("sumo-level", "3")
+                        sl.classList.remove('good')
+                    } else if (newWins >= 25 && newWins < 45) {
+                        setInnerTextById("sumo-level", "4")
+                        sl.classList.remove('good')
+                    } else if (newWins >= 45) {
+                        setInnerTextById("sumo-level", "5")
+                        sl.classList.add('good')
+                    }
+                }
+                sumoChanged = true;
+            }
+            if (sumoChanged) {
+                const se = document.getElementById("sumo-win-container");
+                if (se) {
+                    if (oldWins === 0 && newWins > 0) {
+                        se.classList.remove("hidden")
+                    } else if (oldWins > 0 && newWins === 0) {
+                        se.classList.add("hidden")
+                    }
+                }
+            }
+        }
+
+        function onWateredClick(e) {
+            updateWatered(!wateredToday)
+        }
+
+        function addSumoWin(e) {
+            onSumoChanged(sumoWins, sumoWins + 1)
+        }
+
+        function subtractSumoWin(e) {
+            if (sumoWins > 0) {
+                onSumoChanged(sumoWins, sumoWins - 1)
+            }
+        }
+
+        function onNextDayClick(e) {
+            if (currentDay < 31) {
+                onDayChanged(currentDay, currentDay + 1);
+            } 
+        }
+
+        function onPrevDayClick(e) {
+            if (currentDay > 1) {
+                onDayChanged(currentDay, currentDay - 1);
+            }
+        }
+
+        function onResetClick(e) {
+            onDayChanged(currentDay, 1);
+            onSumoChanged(sumoWins, 0)
+        }
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            onResetClick()
+        });
+    </script>
+    <link rel="stylesheet" href="boku-ps1-best-ending.css" />
+    <script type="module" src="boku-ps1-best-ending.ts"></script>
+</head>
+
+<body>
+    <div class="flex-col">
+        <table class="stream-table">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="flex-center-cell">
+                            <strong id="curr-date"></strong>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="flowers-watered-cell" class="space-between watered-text hidden">
+                            <strong class="texttitle">Watered:</strong>
+                            <strong class="textval" id="flowers-watered-today">No</strong>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="flex-space-between-cell hidden" id="sumo-win-container">
+                            <strong class="texttitle">Sumo Wins:</strong>
+                            <strong class="textval" id="sumo-win-count">0</strong>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="control-row" id="tracker-controls">
+            <div class="control-col">
+                <div class="control-group">
+                    <div class="control-header justify-center">
+                        <label for="curr-date">Current Date</label>
+                    </div>
+                    <div class="control-inputs space-between">
+                        <button class="ctl-btn" id="date-count-minus" onclick="onPrevDayClick()">-</button>
+                        <div class="curr-date-ctl-wrapper relative">
+                            <span id="curr-date-ctl">Aug 1</span>
+                        </div>
+                        <button class="ctl-btn" id="date-count-plus" onclick="onNextDayClick()">+</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-header justify-center">
+                        <label for="sumo-win-count">Sumo Wins</label>
+                    </div>
+                    <div class="control-inputs space-between">
+                        <button class="ctl-btn" id="sumo-win-count-minus" onclick="subtractSumoWin()">-</button>
+                        <span id="sumo-win-count-ctl">0</span>
+                        <button class="ctl-btn" id="sumo-win-count-plus" onclick="addSumoWin()">+</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-inputs justify-center">
+                        <button class="ctl-btn" id="btn-reset-counts" onclick="onResetClick()">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div class="control-col">
+                <div class="control-group">
+                    <div class="control-header justify-center">
+                        <label for="btn-flowers-watered">Watered</label>
+                    </div>
+                    <div class="control-inputs justify-center">
+                        <button class="grow ctl-btn " id="flowers-watered-today-ctl"
+                            onclick="onWateredClick()">No</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-header justify-center">
+                        <label for="sumo-level">Sumo Level</label>
+                    </div>
+                    <div class="control-inputs justify-center">
+                        <span id="sumo-level">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
