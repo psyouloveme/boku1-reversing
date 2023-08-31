@@ -1,0 +1,174 @@
+SystemID PSX
+03659C	b	u	0	MainRAM	DayOfMonth
+036598	d	u	0	MainRAM	Hour
+028FA0	b	u	0	MainRAM	Day1
+028FA1	b	u	0	MainRAM	Hour1
+028FA2	w	u	0	MainRAM	Minute
+028FB0	b	u	0	MainRAM	Day2
+028FB1	b	u	0	MainRAM	Hour2
+028FB2	w	u	0	MainRAM	Next Minute
+028FC0	b	u	0	MainRAM	Day3
+028FC1	b	u	0	MainRAM	Hour3
+028FC2	w	u	0	MainRAM	Minute When Entered
+077E44	d	h	0	MainRAM	referencedalot
+027778	d	h	0	MainRAM	pointer_has_pos
+026BD0	d	h	0	MainRAM	NextScreenPointer
+026BD4	d	h	0	MainRAM	ScreenRelated
+026BE0	d	h	0	MainRAM	CurrentScreenPointer
+08F08A	b	u	0	MainRAM	
+08F08C	b	u	0	MainRAM	
+00918C	d	h	0	MainRAM	
+045A24	b	u	0	MainRAM	
+08F2BA	b	h	0	MainRAM	
+08F2BA	b	h	0	MainRAM	
+08EF96	b	h	0	MainRAM	
+08EF96	b	h	0	MainRAM	
+08F2BA	b	h	0	MainRAM	
+03DD1D	b	u	0	MainRAM	jizou
+045A08	b	u	0	MainRAM	selected bug
+03D279	b	u	0	MainRAM	sumo wins
+03D278	b	u	0	MainRAM	sumo level
+0	S	_	1		
+03E098	b	u	0	MainRAM	active bug type
+03E099	b	u	0	MainRAM	active bug size
+03E09A	b	u	0	MainRAM	active bug lost
+03E09B	b	u	0	MainRAM	active bug size indicator
+03E09C	b	u	0	MainRAM	active bug catch num
+03E09D	b	u	0	MainRAM	active bug catch day
+03E09E	b	u	0	MainRAM	active bug wins
+03E09F	b	u	0	MainRAM	active bug losses
+03E0A0	b	u	0	MainRAM	active bug secretstat
+03E0A1	b	u	0	MainRAM	active bug idk
+03E0A2	b	u	0	MainRAM	active bug idk2
+03E0A3	b	u	0	MainRAM	active bug idk3
+0	S	_	1		
+045A10	b	u	0	MainRAM	1st bug type
+045A11	b	u	0	MainRAM	1st bug size
+045A12	b	u	0	MainRAM	1st bug lost
+045A13	b	u	0	MainRAM	1st bug size indicator
+045A14	b	u	0	MainRAM	1st bug catch num
+045A15	b	u	0	MainRAM	1st bug catch day
+045A16	b	u	0	MainRAM	1st bug wins
+045A17	b	u	0	MainRAM	1st bug losses
+045A18	b	u	0	MainRAM	1st bug secretstat
+045A19	b	u	0	MainRAM	1st bug idk
+045A1A	b	u	0	MainRAM	1st bug idk2
+045A1B	b	u	0	MainRAM	1st bug idk3
+0	S	_	1		
+045A1C	b	u	0	MainRAM	2nd bug type
+045A1D	b	u	0	MainRAM	2nd bug size
+045A1E	b	u	0	MainRAM	2nd bug lost
+045A1F	b	u	0	MainRAM	2nd bug size indicator
+045A20	b	u	0	MainRAM	2nd bug catch num
+045A21	b	u	0	MainRAM	2nd bug catch day
+045A22	b	u	0	MainRAM	2nd bug wins
+045A23	b	u	0	MainRAM	2nd bug losses
+045A24	b	u	0	MainRAM	2nd bug secretstat
+045A25	b	u	0	MainRAM	2nd bug idk
+045A26	b	u	0	MainRAM	2nd bug idk2
+045A27	b	u	0	MainRAM	2nd bug idk3
+0	S	_	1		
+045A28	b	u	0	MainRAM	3rd bug type
+045A29	b	u	0	MainRAM	3rd bug size
+045A2A	b	u	0	MainRAM	3rd bug lost
+045A2B	b	u	0	MainRAM	3rd bug size indicator
+045A2C	b	u	0	MainRAM	3rd bug catch num
+045A2D	b	u	0	MainRAM	3rd bug catch day
+045A2E	b	u	0	MainRAM	3rd bug wins
+045A2F	b	u	0	MainRAM	3rd bug losses
+045A30	b	u	0	MainRAM	3rd bug secretstat
+045A31	b	u	0	MainRAM	3rd bug idk
+045A32	b	u	0	MainRAM	3rd bug idk2
+045A33	b	u	0	MainRAM	3rd bug idk3
+0	S	_	1		
+045A34	b	u	0	MainRAM	4th bug type
+045A35	b	u	0	MainRAM	4th bug size
+045A36	b	u	0	MainRAM	4th bug lost
+045A37	b	u	0	MainRAM	4th bug size indicator
+045A38	b	u	0	MainRAM	4th bug catch num
+045A39	b	u	0	MainRAM	4th bug catch day
+045A3A	b	u	0	MainRAM	4th bug wins
+045A3B	b	u	0	MainRAM	4th bug losses
+045A3C	b	u	0	MainRAM	4th bug secretstat
+045A3D	b	u	0	MainRAM	4th bug idk
+045A3E	b	u	0	MainRAM	4th bug idk2
+045A3F	b	u	0	MainRAM	4th bug idk3
+0	S	_	1		
+045A40	b	u	0	MainRAM	5th bug type
+045A41	b	u	0	MainRAM	5th bug size
+045A42	b	u	0	MainRAM	5th bug lost
+045A43	b	u	0	MainRAM	5th bug size indicator
+045A44	b	u	0	MainRAM	5th bug catch num
+045A45	b	u	0	MainRAM	5th bug catch day
+045A46	b	u	0	MainRAM	5th bug wins
+045A47	b	u	0	MainRAM	5th bug losses
+045A48	b	u	0	MainRAM	5th bug secretstat
+045A49	b	u	0	MainRAM	5th bug idk
+045A4A	b	u	0	MainRAM	5th bug idk2
+045A4B	b	u	0	MainRAM	5th bug idk3
+0	S	_	1		
+045A4C	b	u	0	MainRAM	6th bug type
+045A4D	b	u	0	MainRAM	6th bug size
+045A4E	b	u	0	MainRAM	6th bug lost
+045A4F	b	u	0	MainRAM	6th bug size indicator
+045A50	b	u	0	MainRAM	6th bug catch num
+045A51	b	u	0	MainRAM	6th bug catch day
+045A52	b	u	0	MainRAM	6th bug wins
+045A53	b	u	0	MainRAM	6th bug losses
+045A54	b	u	0	MainRAM	6th bug secretstat
+045A55	b	u	0	MainRAM	6th bug idk
+045A56	b	u	0	MainRAM	6th bug idk2
+045A57	b	u	0	MainRAM	6th bug idk3
+0	S	_	1		
+045A58	b	u	0	MainRAM	7th bug type
+045A59	b	u	0	MainRAM	7th bug size
+045A5A	b	u	0	MainRAM	7th bug lost
+045A5B	b	u	0	MainRAM	7th bug size indicator
+045A5C	b	u	0	MainRAM	7th bug catch num
+045A5D	b	u	0	MainRAM	7th bug catch day
+045A5E	b	u	0	MainRAM	7th bug wins
+045A5F	b	u	0	MainRAM	7th bug losses
+045A60	b	u	0	MainRAM	7th bug secretstat
+045A61	b	u	0	MainRAM	7th bug idk
+045A62	b	u	0	MainRAM	7th bug idk2
+045A63	b	u	0	MainRAM	7th bug idk3
+0	S	_	1		
+045A64	b	u	0	MainRAM	8th bug type
+045A65	b	u	0	MainRAM	8th bug size
+045A66	b	u	0	MainRAM	8th bug lost
+045A67	b	u	0	MainRAM	8th bug size indicator
+045A68	b	u	0	MainRAM	8th bug catch num
+045A69	b	u	0	MainRAM	8th bug catch day
+045A6A	b	u	0	MainRAM	8th bug wins
+045A6B	b	u	0	MainRAM	8th bug losses
+045A6C	b	u	0	MainRAM	8th bug secretstat
+045A6D	b	u	0	MainRAM	8th bug idk
+045A6E	b	u	0	MainRAM	8th bug idk2
+045A6F	b	u	0	MainRAM	8th bug idk3
+0	S	_	1		
+045A70	b	u	0	MainRAM	9th bug type
+045A71	b	u	0	MainRAM	9th bug size
+045A72	b	u	0	MainRAM	9th bug lost
+045A73	b	u	0	MainRAM	9th bug size indicator
+045A74	b	u	0	MainRAM	9th bug catch num
+045A75	b	u	0	MainRAM	9th bug catch day
+045A76	b	u	0	MainRAM	9th bug wins
+045A77	b	u	0	MainRAM	9th bug losses
+045A78	b	u	0	MainRAM	9th bug secretstat
+045A79	b	u	0	MainRAM	9th bug idk
+045A7A	b	u	0	MainRAM	9th bug idk2
+045A7B	b	u	0	MainRAM	9th bug idk3
+0	S	_	1		
+045A7C	b	u	0	MainRAM	10th bug type
+045A7D	b	u	0	MainRAM	10th bug size
+045A7E	b	u	0	MainRAM	10th bug lost
+045A7F	b	u	0	MainRAM	10th bug size indicator
+045A80	b	u	0	MainRAM	10th bug catch num
+045A81	b	u	0	MainRAM	10th bug catch day
+045A82	b	u	0	MainRAM	10th bug wins
+045A83	b	u	0	MainRAM	10th bug losses
+045A84	b	u	0	MainRAM	10th bug secretstat
+045A85	b	u	0	MainRAM	10th bug idk
+045A86	b	u	0	MainRAM	10th bug idk2
+045A87	b	u	0	MainRAM	10th bug idk3
+
