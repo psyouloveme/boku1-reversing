@@ -177,9 +177,11 @@
     <script type="text/javascript">
         let sumoWins = 0;
         let sumoLevel = 3;
-        let sumoEffectiveLevel = 3;
+        // This array stores the days that triggered level-ups.
+        let sumoHistory = [1];
         let currentDay = 1;
-        let wateredToday = false;
+        // This set stores the days on which you watered the flowers.
+        let daysWatered = new Set();
 
         const formatOpts = {
             year: "numeric",
@@ -188,20 +190,16 @@
             timeZone: "Asia/Tokyo",
         };
 
+        function sumoEffectiveLevel() {
+            return sumoHistory.length + 2;
+        }
+
         function updateSumoEffectiveLevel() {
-            if (sumoWins < 9) {
-                sumoEffectiveLevel = 3;
-            } else if (sumoWins > 9 && sumoEffectiveLevel < 4) {
-                sumoEffectiveLevel = 4;
-            } else if (sumoWins > 24 && sumoEffectiveLevel < 5) {
-                sumoEffectiveLevel = 5;
-            } else if (sumoWins > 44 && sumoEffectiveLevel < 6) {
-                sumoEffectiveLevel = 6;
-            }
-            const ctl = setInnerTextById("sumo-eff-level-ctl", sumoEffectiveLevel.toString());
-            const elm = setInnerTextById("sumo-level", sumoLevel.toString() + "/" + sumoEffectiveLevel.toString());
+            const lvl = sumoEffectiveLevel();
+            const ctl = setInnerTextById("sumo-eff-level-ctl", lvl.toString());
+            const elm = setInnerTextById("sumo-level", sumoLevel.toString() + "/" + lvl.toString());
             if (elm) {
-                if (sumoEffectiveLevel === 6) {
+                if (lvl >= 6) {
                     elm.classList.add("good")
                     ctl.classList.add("good")
                 } else {
@@ -216,19 +214,25 @@
             if (sl) {
                 if (sumoWins < 10) {
                     sumoLevel = 3;
-                    sl.classList.remove('good')
-                } else if (sumoWins < 24) {
+                    sl.classList.remove('good');
+                } else if (sumoWins < 25) {
                     sumoLevel = 4;
-                    sl.classList.remove('good')
+                    sl.classList.remove('good');
                 } else if (sumoWins < 45) {
                     sumoLevel = 5;
-                    sl.classList.remove('good')
-                } else {
+                    sl.classList.remove('good');
+                } else if (sumoWins < 65) {
                     sumoLevel = 6;
-                    sl.classList.add('good')
+                    sl.classList.add('good');
+                } else if (sumoWins < 85) {
+                    sumoLevel = 7;
+                    sl.classList.add('good');
+                } else {
+                    sumoLevel = 8;
+                    sl.classList.add('good');
                 }
             }
-            setInnerTextById("sumo-level", sumoLevel.toString() + "/" + sumoEffectiveLevel.toString());
+            setInnerTextById("sumo-level", sumoLevel.toString() + "/" + sumoEffectiveLevel().toString());
             setInnerTextById("sumo-level-ctl", sumoLevel.toString());
 
         }
@@ -257,10 +261,10 @@
             return null
         }
 
-        function updateWatered(watered) {
+        function updateWatered() {
             const innerElem = document.getElementById("flowers-watered-today")
             if (innerElem) {
-                if (watered === true) {
+                if (daysWatered.has(currentDay)) {
                     innerElem.innerText = "Yes"
                     innerElem.classList.remove("bad")
                     innerElem.classList.add("good")
@@ -272,7 +276,6 @@
                     setInnerTextById('flowers-watered-today-ctl', "No")
                 }
             }
-            wateredToday = watered;
         }
 
         function swapSumoAndFlowers(flowersFirst = false) {
@@ -293,7 +296,6 @@
 
         function onDayChanged(oldDay, newDay) {
             currentDay = newDay;
-            wateredToday = false;
             const se = document.getElementById("flowers-watered-cell");
             if (se) {
                 if ((oldDay < 3 || oldDay > 18) && (newDay >= 3 && newDay <= 18)) {
@@ -340,34 +342,57 @@
                 updateSumoLevel()
             }
         }
-
+        
         function onWateredClick(e) {
-            updateWatered(!wateredToday)
+            if (daysWatered.has(currentDay)) {
+                daysWatered.delete(currentDay);
+            } else {
+                daysWatered.add(currentDay);
+            }
+            
+            updateWatered();
         }
 
         function addSumoWin(e) {
-            onSumoChanged(sumoWins, sumoWins + 1)
+            onSumoChanged(sumoWins, sumoWins + 1);
         }
 
         function subtractSumoWin(e) {
             if (sumoWins > 0) {
-                onSumoChanged(sumoWins, sumoWins - 1)
+                onSumoChanged(sumoWins, sumoWins - 1);
+                
+                if (sumoLevel < sumoEffectiveLevel()) {
+                    sumoHistory.pop();
+                    updateSumoEffectiveLevel();
+                }
             }
         }
 
         function onNextDayClick(e) {
             if (currentDay < 31) {
+                if (sumoEffectiveLevel() < sumoLevel) {
+                    sumoHistory.push(currentDay + 1);
+                }
+                
                 onDayChanged(currentDay, currentDay + 1);
             }
         }
 
         function onPrevDayClick(e) {
             if (currentDay > 1) {
+                // Delete the latest history entry if it's now in the future.
+                if (sumoHistory[sumoHistory.length - 1] === currentDay) {
+                    sumoHistory.pop();
+                }
+                
+                daysWatered.delete(currentDay);
                 onDayChanged(currentDay, currentDay - 1);
             }
         }
 
         function onResetClick(e) {
+            daysWatered = new Set();
+            sumoHistory = [1];
             onSumoChanged(sumoWins, 0);
             onDayChanged(currentDay, 1);
         }
@@ -376,19 +401,19 @@
             const c = event.code || event.keyCode
             console.log(event.keyCode)
             if (c === "NumpadAdd" || c === 107) {
-                addSumoWin()
+                addSumoWin();
             } else if (c === "NumpadSubtract" || c === 109) {
-                subtractSumoWin()
+                subtractSumoWin();
             } else if (c === "ArrowRight" || c === 39) {
-                onNextDayClick()
+                onNextDayClick();
             } else if (c === "ArrowLeft" || c === 37) {
-                onPrevDayClick()
+                onPrevDayClick();
             } else if (c === "ArrowUp" || c === 38) {
-                onNextDayClick()
+                onNextDayClick();
             } else if (c === "ArrowDown" || c === 40) {
-                onPrevDayClick()
+                onPrevDayClick();
             } else if (c === "Space" || c === 32) {
-                updateWatered(!wateredToday)
+                onWateredClick();
             }
         }
 
