@@ -21,13 +21,13 @@
         :root {
             /* global/default vars */
             --page-font-family: Arial, Helvetica, sans-serif;
-            --page-background-color: rgb(0, 0, 0);
+            --page-background-color: rgba(0, 0, 0, 255);
             --page-font-color: rgba(255, 255, 255, 255);
             --page-font-size: 18pt;
             
             /* tracker (upper section) vars */
             --trk-stream-text-color: rgba(255, 255, 255, 255);
-            --trk-stream-bg-color: rgba(0, 0, 0);
+            /* --trk-stream-bg-color: rgba(255, 255, 255, 0); */
             --trk-stream-font-size: 28pt;
             --trk-good-text-color: lightgreen;
             --trk-bad-text-color: crimson;
@@ -54,7 +54,7 @@
         .stream-table {
             flex-grow: 1;
             font-size: var(--trk-stream-font-size);
-            background-color: var(--trk-stream-bg-color);
+            /* background-color: var(--trk-stream-bg-color); */
             color: var(--trk-stream-text-color)
         }
 
@@ -176,8 +176,12 @@
     </style>
     <script type="text/javascript">
         let sumoWins = 0;
+        let sumoLevel = 3;
+        // This array stores the days that triggered level-ups.
+        let sumoHistory = [1];
         let currentDay = 1;
-        let wateredToday = false;
+        // This set stores the days on which you watered the flowers.
+        let daysWatered = new Set();
 
         const formatOpts = {
             year: "numeric",
@@ -185,6 +189,53 @@
             day: "numeric",
             timeZone: "Asia/Tokyo",
         };
+
+        function sumoEffectiveLevel() {
+            return sumoHistory.length + 2;
+        }
+
+        function updateSumoEffectiveLevel() {
+            const lvl = sumoEffectiveLevel();
+            const ctl = setInnerTextById("sumo-eff-level-ctl", lvl.toString());
+            const elm = setInnerTextById("sumo-level", sumoLevel.toString() + "/" + lvl.toString());
+            if (elm) {
+                if (lvl >= 6) {
+                    elm.classList.add("good")
+                    ctl.classList.add("good")
+                } else {
+                    elm.classList.remove("good")
+                    ctl.classList.remove("good")
+                }
+            }
+        }
+
+        function updateSumoLevel() {
+            const sl = document.getElementById("sumo-level-ctl");
+            if (sl) {
+                if (sumoWins < 10) {
+                    sumoLevel = 3;
+                    sl.classList.remove('good');
+                } else if (sumoWins < 25) {
+                    sumoLevel = 4;
+                    sl.classList.remove('good');
+                } else if (sumoWins < 45) {
+                    sumoLevel = 5;
+                    sl.classList.remove('good');
+                } else if (sumoWins < 65) {
+                    sumoLevel = 6;
+                    sl.classList.add('good');
+                } else if (sumoWins < 85) {
+                    sumoLevel = 7;
+                    sl.classList.add('good');
+                } else {
+                    sumoLevel = 8;
+                    sl.classList.add('good');
+                }
+            }
+            setInnerTextById("sumo-level", sumoLevel.toString() + "/" + sumoEffectiveLevel().toString());
+            setInnerTextById("sumo-level-ctl", sumoLevel.toString());
+
+        }
 
         function formatDate(dayOfMonth) {
             let dateToFormat;
@@ -210,10 +261,10 @@
             return null
         }
 
-        function updateWatered(watered) {
+        function updateWatered() {
             const innerElem = document.getElementById("flowers-watered-today")
             if (innerElem) {
-                if (watered === true) {
+                if (daysWatered.has(currentDay)) {
                     innerElem.innerText = "Yes"
                     innerElem.classList.remove("bad")
                     innerElem.classList.add("good")
@@ -225,25 +276,26 @@
                     setInnerTextById('flowers-watered-today-ctl', "No")
                 }
             }
-            wateredToday = watered;
         }
 
         function swapSumoAndFlowers(flowersFirst = false) {
             const sumoRow = document.getElementById("trk-sumo-wins-row");
             const flowersRow = document.getElementById("trk-flowers-watered-row");
+            const sumoLevelRow = document.getElementById("trk-sumo-level-row")
             if (sumoRow && flowersRow) {
                 const parent = sumoRow.parentNode;
                 if (flowersFirst) {
+                    parent.insertBefore(flowersRow, sumoLevelRow);
                     parent.insertBefore(flowersRow, sumoRow);
                 } else {
                     parent.insertBefore(sumoRow, flowersRow);
+                    parent.insertBefore(sumoLevelRow, flowersRow)
                 }
             }
         }
 
         function onDayChanged(oldDay, newDay) {
             currentDay = newDay;
-            wateredToday = false;
             const se = document.getElementById("flowers-watered-cell");
             if (se) {
                 if ((oldDay < 3 || oldDay > 18) && (newDay >= 3 && newDay <= 18)) {
@@ -257,10 +309,10 @@
             setInnerTextById("curr-date", formatDate(newDay));
             setInnerTextById("curr-date-ctl", formatDate(newDay).split(',')[0]);
             updateWatered();
+            updateSumoEffectiveLevel();
         }
 
         function onSumoChanged(oldWins, newWins) {
-            let sumoChanged = false;
             if (oldWins !== newWins) {
                 sumoWins = newWins;
                 const se = document.getElementById("sumo-win-count");
@@ -276,67 +328,102 @@
                         ct.classList.remove('good')
                     }
                 }
-                const sl = document.getElementById("sumo-level");
-                if (sl) {
-                    if (newWins < 10) {
-                        setInnerTextById("sumo-level", "3")
-                        sl.classList.remove('good')
-                    } else if (newWins >= 25 && newWins < 45) {
-                        setInnerTextById("sumo-level", "4")
-                        sl.classList.remove('good')
-                    } else if (newWins >= 45) {
-                        setInnerTextById("sumo-level", "5")
-                        sl.classList.add('good')
-                    }
-                }
-                sumoChanged = true;
-            }
-            if (sumoChanged) {
-                const se = document.getElementById("sumo-win-container");
-                if (se) {
+                const sec = document.getElementById("sumo-win-container");
+                const lev = document.getElementById("sumo-level-container");
+                if (sec && lev) {
                     if (oldWins === 0 && newWins > 0) {
-                        se.classList.remove("hidden")
+                        sec.classList.remove("hidden")
+                        lev.classList.remove("hidden")
                     } else if (oldWins > 0 && newWins === 0) {
-                        se.classList.add("hidden")
+                        sec.classList.add("hidden")
+                        lev.classList.add("hidden")
                     }
                 }
+                updateSumoLevel()
             }
         }
-
+        
         function onWateredClick(e) {
-            updateWatered(!wateredToday)
+            if (daysWatered.has(currentDay)) {
+                daysWatered.delete(currentDay);
+            } else {
+                daysWatered.add(currentDay);
+            }
+            
+            updateWatered();
         }
 
         function addSumoWin(e) {
-            onSumoChanged(sumoWins, sumoWins + 1)
+            onSumoChanged(sumoWins, sumoWins + 1);
         }
 
         function subtractSumoWin(e) {
             if (sumoWins > 0) {
-                onSumoChanged(sumoWins, sumoWins - 1)
+                onSumoChanged(sumoWins, sumoWins - 1);
+                
+                if (sumoLevel < sumoEffectiveLevel()) {
+                    sumoHistory.pop();
+                    updateSumoEffectiveLevel();
+                }
             }
         }
 
         function onNextDayClick(e) {
             if (currentDay < 31) {
+                if (sumoEffectiveLevel() < sumoLevel) {
+                    sumoHistory.push(currentDay + 1);
+                }
+                
                 onDayChanged(currentDay, currentDay + 1);
             }
         }
 
         function onPrevDayClick(e) {
             if (currentDay > 1) {
+                // Delete the latest history entry if it's now in the future.
+                if (sumoHistory[sumoHistory.length - 1] === currentDay) {
+                    sumoHistory.pop();
+                }
+                
+                daysWatered.delete(currentDay);
                 onDayChanged(currentDay, currentDay - 1);
             }
         }
 
         function onResetClick(e) {
+            daysWatered = new Set();
+            sumoHistory = [1];
+            onSumoChanged(sumoWins, 0);
             onDayChanged(currentDay, 1);
-            onSumoChanged(sumoWins, 0)
         }
 
-        document.addEventListener("DOMContentLoaded", function (event) {
-            onResetClick()
-        });
+        function onKeyPress(e) {
+            const c = event.code || event.keyCode
+            console.log(event.keyCode)
+            if (c === "NumpadAdd" || c === 107) {
+                addSumoWin();
+            } else if (c === "NumpadSubtract" || c === 109) {
+                subtractSumoWin();
+            } else if (c === "ArrowRight" || c === 39) {
+                onNextDayClick();
+            } else if (c === "ArrowLeft" || c === 37) {
+                onPrevDayClick();
+            } else if (c === "ArrowUp" || c === 38) {
+                onNextDayClick();
+            } else if (c === "ArrowDown" || c === 40) {
+                onPrevDayClick();
+            } else if (c === "Space" || c === 32) {
+                onWateredClick();
+            }
+        }
+
+        function onLoaded() {
+            onResetClick();
+        }
+
+        window.addEventListener("keydown", onKeyPress);
+        document.addEventListener("DOMContentLoaded", onLoaded);
+
     </script>
 </head>
 
@@ -367,13 +454,21 @@
                         </div>
                     </td>
                 </tr>
+                <tr id="trk-sumo-level-row">
+                    <td>
+                        <div class="flex-space-between-cell hidden" id="sumo-level-container">
+                            <strong class="texttitle">Sumo Level:</strong>
+                            <strong class="textval" id="sumo-level">3/3</strong>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <div class="control-row" id="tracker-controls">
             <div class="control-col">
                 <div class="control-group">
                     <div class="control-header justify-center">
-                        <label for="curr-date">Current Date</label>
+                        <label for="curr-date">Date</label>
                     </div>
                     <div class="control-inputs space-between">
                         <button class="ctl-btn" id="date-count-minus" onclick="onPrevDayClick()">-</button>
@@ -385,7 +480,7 @@
                 </div>
                 <div class="control-group">
                     <div class="control-header justify-center">
-                        <label for="sumo-win-count">Sumo Wins</label>
+                        <label for="sumo-win-count">Wins</label>
                     </div>
                     <div class="control-inputs space-between">
                         <button class="ctl-btn" id="sumo-win-count-minus" onclick="subtractSumoWin()">-</button>
@@ -411,10 +506,18 @@
                 </div>
                 <div class="control-group">
                     <div class="control-header justify-center">
-                        <label for="sumo-level">Sumo Level</label>
+                        <label for="sumo-level-ctl">Level</label>
                     </div>
                     <div class="control-inputs justify-center">
-                        <span id="sumo-level">0</span>
+                        <span id="sumo-level-ctl">3</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-header justify-center">
+                        <label for="sumo-eff-level-ctl">E. Level</label>
+                    </div>
+                    <div class="control-inputs justify-center">
+                        <span id="sumo-eff-level-ctl">3</span>
                     </div>
                 </div>
             </div>
