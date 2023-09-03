@@ -25,9 +25,22 @@ SystemID PSX
 08EF96	b	h	0	MainRAM	
 08F2BA	b	h	0	MainRAM	
 03DD1D	b	u	0	MainRAM	jizou
-045A08	b	u	0	MainRAM	selected bug
 03D279	b	u	0	MainRAM	sumo wins
 03D278	b	u	0	MainRAM	sumo level
+045A08	b	u	0	MainRAM	selected bug
+08F030	d	s	0	MainRAM	HP
+08F028	b	u	0	MainRAM	STR
+08F02A	b	u	0	MainRAM	DEF0
+08F02B	b	u	0	MainRAM	DEF1
+08F02C	b	u	0	MainRAM	SPD
+08F02D	b	u	0	MainRAM	SICL
+0	S	_	1		
+08F0A0	d	s	0	MainRAM	HP
+08F098	b	u	0	MainRAM	STR
+08F09A	b	u	0	MainRAM	DEF0
+08F09B	b	u	0	MainRAM	DEF1
+08F09C	b	u	0	MainRAM	SPD
+08F09D	b	u	0	MainRAM	SICL
 0	S	_	1		
 03E098	b	u	0	MainRAM	active bug type
 03E099	b	u	0	MainRAM	active bug size
