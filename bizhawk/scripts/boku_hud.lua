@@ -4,6 +4,7 @@ _G.bizstring = _G.bizstring
 _G.emu = _G.emu
 _G.joypad = _G.joypad
 _G.gui = _G.gui
+_G.client = _G.client
 
 local mode_offset = 0x237e0;
 local GAME_MODE = 0;
@@ -70,6 +71,73 @@ local water_level_offset = 0x035E92;
 local blooms_offset = 0x035E93;
 local watered_today_offset = 0x035E4E;
 
+local on_screen_bug_id = 0x028074;
+local on_screen_bug_struct_size = 0x58;
+local on_screen_bug_struct_count = 0xE;
+
+local function bug_id_to_string(id)
+    if id == 0 then return "Asian Swallowtail" end;
+    if id == 1 then return "Old World Swallowtail" end;
+    if id == 2 then return "Long Tail Spangle" end;
+    if id == 3 then return "Chinese Peacock Swallowtail" end;
+    if id == 4 then return "Musk swallowtail butterfly" end;
+    if id == 5 then return "Common bluebottle" end;
+    if id == 6 then return "Mikado Swallowtail" end;
+    if id == 7 then return "Small White" end;
+    if id == 8 then return "Eastern Pale Clouded Yellow" end;
+    if id == 9 then return "Indian Red Admiral" end;
+    if id == 10 then return "Comma" end;
+    if id == 11 then return "Blue Admiral" end;
+    if id == 12 then return "European Peacock" end;
+    if id == 13 then return "Great Purple Emperor" end;
+    if id == 14 then return "Poplar Admiral" end;
+    if id == 15 then return "Tailless Bushblue" end;
+    if id == 16 then return "Green hairstreak" end;
+    if id == 17 then return "Pale Grass Blue" end;
+    if id == 18 then return "Swallow Short-tailed Blue" end;
+    if id == 19 then return "Chestnut Tiger" end;
+    if id == 20 then return "Chinese Bushbrown" end;
+    if id == 21 then return "European Beak" end;
+    if id == 22 then return "Indian Awlking" end;
+    if id == 23 then return "Miyama Stag Beetle ♂" end;
+    if id == 24 then return "Japanese Great Stag Beetle ♂" end;
+    if id == 25 then return "Titan Stag Beetle" end;
+    if id == 26 then return "Little Stag Beetle" end;
+    if id == 27 then return "Saw Stag Beetle ♂" end;
+    if id == 28 then return "Asian Red-footed Stag Beetle" end;
+    if id == 29 then return "Oni Stag Beetle" end;
+    if id == 30 then return "Rhinoceros Beetle ♂" end;
+    if id == 31 then return "Heike Firefly" end;
+    if id == 32 then return "Damselfly" end;
+    if id == 33 then return "Japanese Relict Dragonfly" end;
+    if id == 34 then return "??? Dragonfly" end;
+    if id == 35 then return "Jumbo Dragonfly" end;
+    if id == 36 then return "Lesser Emperor" end;
+    if id == 37 then return "White-tailed Skimmer" end;
+    if id == 38 then return "Summer Darter dragonfly" end;
+    if id == 39 then return "Mayutate akane dragonfly" end;
+    if id == 40 then return "Butterfly Dragonfly" end;
+    if id == 41 then return "Migratory Locust" end;
+    if id == 42 then return "Japanese Bush Cricket" end;
+    if id == 43 then return "Kusakiri Bush Cricket" end;
+    if id == 44 then return "Forest Bush Cricket" end;
+    if id == 45 then return "Japanese Katydid" end;
+    if id == 46 then return "Emma Field Cricket" end;
+    if id == 47 then return "Skylark Sword-tailed Cricket" end;
+    if id == 48 then return "Bell Cricket" end;
+    if id == 49 then return "Japanese Pine Cricket" end;
+    if id == 50 then return "Kempfer Cicada" end;
+    if id == 51 then return "Large Brown Cicada" end;
+    if id == 52 then return "Ezo Cicada" end;
+    if id == 53 then return "Evening Cicada" end;
+    if id == 54 then return "Robust Cicada" end;
+    if id == 55 then return "Last Summer Cicada" end;
+    if id == 56 then return "Miyama Stag Beetle ♀" end;
+    if id == 57 then return "Japanese Great Stag Beetle ♀" end;
+    if id == 58 then return "Saw Stag Beetle ♀" end;
+    if id == 59 then return "Rhinoceros Beetle ♀" end;
+    return bizstring.hex(id);
+end
 
 
 ---Convert CD Pos to Int
@@ -79,28 +147,6 @@ local watered_today_offset = 0x035E4E;
 ---@return number
 local function cdPosToInt(minute, second, sector)
     return (((minute >> 4) * 10 + (minute & 15)) * 60 + (second >> 4) * 10 + (second & 15)) * 75 + (sector >> 4) * 10 + (sector & 15) + -150;
-end
-
----Convert Int to CD Pos table
----@param cdint number
----@return table
-local function cdIntToPos(cdint)
-    local pos = {
-        minute = nil,
-        second = nil,
-        sector = nil
-    };
-    local iVar1;
-    local iVar2;
-    local iVar3;
-    iVar3 = math.floor((cdint + 150) / 75);
-    iVar2 = (cdint + 150) % 75;
-    iVar1 = math.floor(iVar3 / 60);
-    iVar3 = iVar3 % 60;
-    pos.sector = iVar2 + math.floor(iVar2 / 10) * 6;
-    pos.second = iVar3 + math.floor(iVar3 / 10) * 6;
-    pos.minute = iVar1 + math.floor(iVar1 / 10) * 6;
-    return pos;
 end
 
 ---Read a string from memory
@@ -119,9 +165,6 @@ local function read_string(address, length)
     return valuestring;
 end;
 
--- time display by psyouloveme
-
-
 
 ---Display time and current map
 ---by psyouloveme
@@ -132,7 +175,9 @@ local function draw_clock()
     local minute_string = bizstring.pad_start(tostring(mainmemory.readbyte(minute_offset)), 2, 0);
     local day = "aug "..bizstring.pad_start(tostring(mainmemory.readbyte(day_offset)), 2, 0);
 
-    local map_string = bizstring.pad_start(read_string(map_offset, 6), 6, " ");
+    local raw_map_string = read_string(map_offset, 6);
+    local map_string = bizstring.pad_start(raw_map_string, 6, " ");
+
     local mode_string = bizstring.pad_start(tostring(GAME_MODE), 2, " ");
     local luck = mainmemory.readbyte(luck_offset);
 
@@ -148,12 +193,12 @@ local function draw_clock()
         nextMinute = nextMinute - minute;
     end
 
-    local next_map_string = bizstring.pad_start(read_string(next_map_offset, 6), 6, " ");
+    local next_map_raw = read_string(next_map_offset, 6);
+    local next_map_string = bizstring.pad_start(next_map_raw, 6, " ");
     local next_minute = "+" .. bizstring.pad_start(tostring(nextMinute), 2, 0);
     local nextTimeIncrementText = "  " .. next_minute 
     nextTimeIncrementText = nextTimeIncrementText .. bizstring.pad_start(tostring(next_map_string), 14, " ")
     gui.drawText(10, 11, nextTimeIncrementText);
-
 
     local luckAndMode = "Mode:" .. mode_string .. " Luck: " .. tostring(luck);
     gui.drawText(10, 22, luckAndMode)
@@ -351,10 +396,10 @@ local bug_page_minus_counter = 0;
 local function draw_bug_inventories()
     local t = joypad.get();
     if t["P1 R2"] == true then
-        if t["P1 D-Pad Right"] == true then
+        if t["P1 Right"] == true then
             bug_page_plus_counter = bug_page_plus_counter + 1;
             bug_page_minus_counter = 0;
-        elseif t["P1 D-Pad Left"] == true then
+        elseif t["P1 Left"] == true then
             bug_page_minus_counter = bug_page_minus_counter + 1;
             bug_page_plus_counter = 0;
         else
@@ -366,7 +411,7 @@ local function draw_bug_inventories()
         bug_page_plus_counter = 0;
     end
 
-    if bug_page_minus_counter == 15 then
+    if bug_page_minus_counter == 20 then
         if bug_stat_page - 1 < 0 then
             bug_stat_page = bug_stat_pages - 1;
         else
@@ -375,7 +420,7 @@ local function draw_bug_inventories()
         bug_page_minus_counter = 0;
     end
 
-    if bug_page_plus_counter == 15 then
+    if bug_page_plus_counter == 20 then
         if bug_stat_page + 1 == bug_stat_pages then
             bug_stat_page = 0;
         else
@@ -428,58 +473,42 @@ local function draw_bug_inventories()
     -- read guts bugs
 end;
 
-
-
-
-
-
-
-
 ---Draw the last CD position to the screen
 local function draw_cdpos()
     local cdminute = mainmemory.readbyte(cdpos_last_minute_offset);
     local cdsecond = mainmemory.readbyte(cdpos_last_second_offset);
     local cdsector = mainmemory.readbyte(cdpos_last_sector_offset);
-
-    
-    -- local cdminute = 11;
-    -- local cdsecond = 46;
-    -- local cdsector = 60;
-
-    -- local cdpos = cdIntToPos(0x3d80);
     local cdint = cdPosToInt(cdminute, cdsecond, cdsector);
     local cdstring = bizstring.pad_start(tostring(cdminute), 3, 0) .. ':' .. bizstring.pad_start(tostring(cdsecond), 2, 0) .. ':' .. bizstring.pad_start(tostring(cdsector), 3, 0) .. '-' .. tostring(cdint);
-    -- local cdstring = bizstring.pad_start(tostring(cdpos.minute), 3, 0) .. ':' .. bizstring.pad_start(tostring(cdpos.second), 2, 0) .. ':' .. bizstring.pad_start(tostring(cdpos.sector), 3, 0) .. '-' .. tostring(0x3d80);
-    -- local cdstring = bizstring.pad_start(tostring(cdpos.minute), 3, 0) .. ':' .. bizstring.pad_start(tostring(cdpos.second), 2, 0) .. ':' .. bizstring.pad_start(tostring(cdpos.sector), 3, 0) .. '-' .. tostring(cdint);
     gui.drawText(10, 33, cdstring);
 end;
 
 ---Draw achived story flags to the screen
 local function draw_story_flags()
     -- storypoints display by Ted and psyouloveme
-    --  1 ????
-    --  2 flowers
-    --  3 corn
-    --  4 Moe 1
-    --  5 Moe 2
-    --  6 Shirabe 1
-    --  7 Shirabe 2
-    --  8 fish
-    --  9 shortcut
-    -- 10 wolf
-    -- 11 ????
-    -- 12 firelifes
-    -- 13 mountain
-    -- 14 snakeskin
-    -- 15 shirabe 3
-    -- 16 rain
-
+    -- -  1 ???? shirabe 3 or kites
+    -- -  2 Make the morning glories bloom for 9 days (awarded after credits )
+    -- -  3 Help aunt and uncle pick corn
+    -- -  4 Help Moe gather flowers to press
+    -- -  5 Give Moe the book from the waterfall cave
+    -- -  6 Spend time with Shirabe on the 4th
+    -- -  7 Spend time at Cape Kaze with Shirabe on the 14th
+    -- -  8 Catch the large trout, Jumbo
+    -- -  9 Win the sumo tournament and enter the secret area 
+    -- - 10 Get a photo of a Japanese wolf
+    -- - 11 ????                                         shirabe 3 or kites
+    -- - 12 See the fireflies on the 5th
+    -- - 13 Climb to the top of the mountain
+    -- - 14 Obtain a snake skin
+    -- - 15 shirabe 3
+    -- - 16 See the rain at the overpass on the 26th or 27th
+ 
     local pointsraw = mainmemory.readbyte(story_point_offset);
     local points = 0;
     local point_to_draw = 0;
     local point_name = "";
     local point_ypos = 33;
-    for i = 0, 15 do
+    for i = 0, 17 do
         if ((pointsraw & (1 << i)) ~= 0) then
             point_to_draw = i + 1;
             point_ypos = 30 + (points * 10);
@@ -490,13 +519,13 @@ local function draw_story_flags()
             elseif point_to_draw == 3 then
                 point_name = " - corn";
             elseif point_to_draw == 4 then
-                point_name = " - moe 1";
+                point_name = " - moe flowers";
             elseif point_to_draw == 5 then
-                point_name = " - moe 2";
+                point_name = " - moe book";
             elseif point_to_draw == 6 then
-                point_name = " - shirabe 1";
+                point_name = " - shirabe 4th";
             elseif point_to_draw == 7 then
-                point_name = " - shirabe 2";
+                point_name = " - shirabe 14th";
             elseif point_to_draw == 8 then
                 point_name = " - jumbo";
             elseif point_to_draw == 9 then
@@ -577,9 +606,6 @@ end
 ---Draw the status of the tree to the screen
 local function draw_tree_status()
     local treehits = mainmemory.readbyte(tree_hits_offset);
-    -- local treehits = mainmemory.readbyte(0x035E91);
-    -- local hivehits = mainmemory.readbyte(0x035EE3);
-    -- local hit_string = "hive hits: "..tostring(total_hive_hits).."/4";
     if treehits > 0 and treehits < 5 then
         gui.drawText(160, 40, "tree hits: "..tostring(treehits).. "/5");
     elseif treehits > 0 and treehits > 5 then
@@ -601,13 +627,30 @@ local function draw_flower_status()
     gui.drawText(170, 80, "watered today?: "..tostring(hydrationLevel));
 end
 
+local function draw_screen_bugs()
+    local bug_id = mainmemory.read_u16_le(on_screen_bug_id);
+    local bug_count = mainmemory.read_u16_le(0x02806c);
+    local fontsize = 11;
+    local x = 10;
+    local y = 33;
+    local y_stride = fontsize - 1;
+    gui.drawText(x, y, "Bug count: " .. tostring(bug_count))
+    y = y + y_stride;
+    for current_index = 0, bug_count-1, 1 do
+        bug_id = mainmemory.read_u16_le(on_screen_bug_id + (current_index * on_screen_bug_struct_size))
+        gui.drawText(x, y, bizstring.pad_start(tostring(current_index), 2, " ") .. ": " .. bizstring.pad_start(bizstring.hex(bug_id), 2, " ") .. " " .. bug_id_to_string(bug_id));
+        y = y + y_stride;
+    end
+end;
+
 local holdcount = 0
 local current_page = 1;
-local page_count = 3;
+local page_count = 4;
 local pages = {};
 pages[0] = {};
 pages[1] = {};
 pages[2] = {};
+pages[3] = {};
 table.insert(pages[0], draw_clock);
 table.insert(pages[0], draw_story_flags);
 table.insert(pages[0], draw_beehive_status);
@@ -620,6 +663,8 @@ table.insert(pages[1], draw_sumo_stats);
 table.insert(pages[2], draw_clock);
 table.insert(pages[2], draw_bug_inventories);
 table.insert(pages[2], draw_sumo_stats);
+table.insert(pages[3], draw_clock);
+table.insert(pages[3], draw_screen_bugs);
 
 ---Main loop
 while true do
