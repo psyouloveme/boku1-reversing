@@ -9,6 +9,7 @@ _G.client = _G.client
 local mode_offset = 0x237e0;
 local GAME_MODE = 0;
 
+
 local bugStructSize   = 0xc;
 
 -- arrays of 20
@@ -35,13 +36,25 @@ local bigBugStruct    = 0x46f28;
 local singleBugFive   = 0x47c08;
 
 -- time and maps
-local hour_offset = 0x028FA1;
-local minute_offset = 0x028FA2;
-local day_offset = 0x028fb0;
-local map_offset = 0x26c00;
-local next_minute_offset = 0x028FB2;
-local next_map_offset = 0x26c08;
+local day_curr_offset = 0x028fb0;
+local DAY_CURR = 0;
+local hour_curr_offset = 0x028FA1;
+local HOUR_CURR = 0;
 local luck_offset = 0x3dd1d;
+
+local minute_curr_offset = 0x028FA2;
+local MINUTE_CURR = 0;
+local minute_next_offset = 0x028FB2;
+local MINUTE_NEXT = 0;
+
+local map_curr_offset = 0x26c00;
+local MAP_CURR = nil;
+local map_next_offset = 0x26c08;
+local MAP_NEXT = nil;
+
+local frame_count_offset = 0x028850;
+local FRAME_COUNT = 0;
+
 
 -- sumo basic stats
 local sumo_level_offset = 0x3d278;
@@ -139,7 +152,6 @@ local function bug_id_to_string(id)
     return bizstring.hex(id);
 end
 
-
 ---Convert CD Pos to Int
 ---@param minute number
 ---@param second number
@@ -165,18 +177,13 @@ local function read_string(address, length)
     return valuestring;
 end;
 
-
 ---Display time and current map
 ---by psyouloveme
 local function draw_clock()
-    local hour = mainmemory.readbyte(hour_offset);
-    local hour_string = bizstring.pad_start(tostring(hour), 2, 0);
-    local minute = mainmemory.readbyte(minute_offset);
-    local minute_string = bizstring.pad_start(tostring(mainmemory.readbyte(minute_offset)), 2, 0);
-    local day = "aug "..bizstring.pad_start(tostring(mainmemory.readbyte(day_offset)), 2, 0);
-
-    local raw_map_string = read_string(map_offset, 6);
-    local map_string = bizstring.pad_start(raw_map_string, 6, " ");
+    local hour_string = bizstring.pad_start(tostring(HOUR_CURR), 2, 0);
+    local minute_string = bizstring.pad_start(tostring(MINUTE_CURR), 2, 0);
+    local day = "aug "..bizstring.pad_start(DAY_CURR, 2, 0);
+    local map_string = bizstring.pad_end(MAP_CURR, 6, " ");
 
     local mode_string = bizstring.pad_start(tostring(GAME_MODE), 2, " ");
     local luck = mainmemory.readbyte(luck_offset);
@@ -186,15 +193,15 @@ local function draw_clock()
     time = time .. " " .. map_string;
     gui.drawText(10, 0, time);
 
-    local nextMinute =  mainmemory.readbyte(next_minute_offset);
+    local minute = MINUTE_CURR;
+    local nextMinute = MINUTE_NEXT;
     if (nextMinute < minute) then
         nextMinute = (nextMinute + 60) - minute;
     else
         nextMinute = nextMinute - minute;
     end
 
-    local next_map_raw = read_string(next_map_offset, 6);
-    local next_map_string = bizstring.pad_start(next_map_raw, 6, " ");
+    local next_map_string = bizstring.pad_end(MAP_NEXT, 6, " ");
     local next_minute = "+" .. bizstring.pad_start(tostring(nextMinute), 2, 0);
     local nextTimeIncrementText = "  " .. next_minute 
     nextTimeIncrementText = nextTimeIncrementText .. bizstring.pad_start(tostring(next_map_string), 14, " ")
@@ -225,6 +232,7 @@ local function read_beetle_stat(offset)
         sicl = mainmemory.read_u16_le(offset + 5);
         unknown1 = mainmemory.readbyte(offset + 7);
         hitpoints = mainmemory.read_s32_le(offset + 8);
+        taps = mainmemory.readbyte(offset + 0x3e);
     };
     return beetle_stat;
 end;
@@ -252,6 +260,10 @@ local function draw_beetle_stat(beetle_stat, is_player)
     local y_stride = fontsize - 2;
     local forecolor = nil;
     local backcolor = nil;
+    y = y + y_stride;
+    gui.drawText(x, y, 'Tap :' .. bizstring.pad_start(tostring(beetle_stat.taps), 3, " "), forecolor, backcolor, fontsize);
+    y = y + y_stride;
+    gui.drawText(x, y, 'STR :' .. bizstring.pad_start(tostring(beetle_stat.strength), 3, " "), forecolor, backcolor, fontsize);
     y = y + y_stride;
     gui.drawText(x, y, 'STR :' .. bizstring.pad_start(tostring(beetle_stat.strength), 3, " "), forecolor, backcolor, fontsize);
     y = y + y_stride;
@@ -284,7 +296,6 @@ local function draw_beetle_stats()
         draw_beetle_stat(beetle_stat, false)
     end
 end;
-
 
 ---Read a bug structure from memory (12 bytes)
 ---@param offset number memory offset to read from
@@ -643,33 +654,134 @@ local function draw_screen_bugs()
     end
 end;
 
+
+local last_screen = nil;
+local last_time_lrt = 0;
+local last_time_rta = 0;
+local last_frame_count = 0;
+local frames_since_last_update = 0;
+local time_on_screen_lrt = 0;
+local time_on_screen_rta = 0;
+local hit_new_screen = false;
+local pause_frames_lrt = 0;
+local last_pause_frames_lrt = 0;
+local total_time_rta = 0;
+local total_time_lrt = 0;
+local total_pause_frames = 0;
+
+local function draw_timer()
+    total_time_rta = total_time_rta + .1/6;
+    if GAME_MODE ~= 5 then
+        if last_time_lrt ~= nil then
+            last_time_lrt = time_on_screen_lrt;
+            last_time_rta = time_on_screen_rta;
+            gui.drawText(10, 33, string.format("Total LRT: %.3f (%.3f)", total_time_lrt, total_pause_frames))
+            gui.drawText(10, 44, string.format("Total RTA: %.3f", total_time_rta))
+            gui.drawText(10, 66, string.format("Last LRT: %.3f (%.3f)", last_time_lrt, last_pause_frames_lrt))
+            gui.drawText(10, 77, string.format("Last RTA: %.3f", last_time_rta))
+        end;
+        return;
+    end;
+
+    time_on_screen_rta = time_on_screen_rta + .1/6;
+
+    -- if MAP_NEXT ~= "BREAK" and MAP_NEXT ~= "REMAP" then
+    if MAP_NEXT ~= "REMAP" then
+        if last_frame_count ~= FRAME_COUNT then
+            frames_since_last_update = 0;
+        else
+            frames_since_last_update = frames_since_last_update + 1;
+        end;
+
+        if frames_since_last_update < 2 then
+            time_on_screen_lrt = time_on_screen_lrt + .1/6;
+            total_time_lrt = total_time_lrt + .1/6;
+        else
+            pause_frames_lrt = pause_frames_lrt + .1/6;
+            total_pause_frames = total_pause_frames + .1/6;
+        end
+    else
+        pause_frames_lrt = pause_frames_lrt + .1/6;
+        total_pause_frames = total_pause_frames + .1/6;
+    end
+
+    if last_screen ~= MAP_CURR then
+        last_time_lrt = time_on_screen_lrt;
+        last_time_rta = time_on_screen_rta;
+        last_pause_frames_lrt = pause_frames_lrt;
+        time_on_screen_rta = 0;
+        time_on_screen_lrt = 0;
+        pause_frames_lrt = 0;
+    end
+
+    gui.drawText(10, 33, string.format("Total LRT: %.3f (%.3f)", total_time_lrt, total_pause_frames))
+    gui.drawText(10, 44, string.format("Total RTA: %.3f", total_time_rta))
+    gui.drawText(10, 66, string.format("Last LRT: %.3f (%.3f)", last_time_lrt, last_pause_frames_lrt))
+    gui.drawText(10, 77, string.format("Last RTA: %.3f", last_time_rta))
+    gui.drawText(10, 99, string.format("LRT: %.3f (%.3f)", time_on_screen_lrt, pause_frames_lrt))
+    gui.drawText(10, 110, string.format("RTA: %.3f", time_on_screen_rta))
+    -- gui.drawText(10, 55, string.format("Chan: %d", frame_change_counter))
+    -- gui.drawText(10, 66, string.format("Fram: %d", FRAME_COUNT))
+    -- gui.drawText(10, 77, string.format("SCur: %s", MAP_CURR))
+    -- gui.drawText(10, 88, string.format("SLas: %s", last_screen))
+
+    last_screen = MAP_CURR
+    last_frame_count = FRAME_COUNT
+end;
+
+
+----------------------- Main
+
 local holdcount = 0
 local current_page = 1;
-local page_count = 4;
+local page_count = 5;
 local pages = {};
-pages[0] = {};
+local page_names = {};
 pages[1] = {};
+page_names[1] = "screen timer test"
 pages[2] = {};
+page_names[2] = "Sumo"
 pages[3] = {};
-table.insert(pages[0], draw_clock);
-table.insert(pages[0], draw_story_flags);
-table.insert(pages[0], draw_beehive_status);
-table.insert(pages[0], draw_tree_status);
-table.insert(pages[0], draw_flower_status);
+page_names[3] = "Sumo inventories"
+pages[4] = {};
+page_names[4] = "Bugs On Screen"
+pages[5] = {};
+page_names[5] = "Screen Timer"
+-- table.insert(pages[0], draw_clock);
+-- table.insert(pages[0], draw_story_flags);
+-- table.insert(pages[0], draw_beehive_status);
+-- table.insert(pages[0], draw_tree_status);
+-- table.insert(pages[0], draw_flower_status);
 table.insert(pages[1], draw_clock);
-table.insert(pages[1], draw_cdpos);
-table.insert(pages[1], draw_beetle_stats);
-table.insert(pages[1], draw_sumo_stats);
+table.insert(pages[1], draw_timer);
 table.insert(pages[2], draw_clock);
-table.insert(pages[2], draw_bug_inventories);
+table.insert(pages[2], draw_cdpos);
+table.insert(pages[2], draw_beetle_stats);
 table.insert(pages[2], draw_sumo_stats);
 table.insert(pages[3], draw_clock);
-table.insert(pages[3], draw_screen_bugs);
+table.insert(pages[3], draw_bug_inventories);
+table.insert(pages[3], draw_sumo_stats);
+table.insert(pages[4], draw_clock);
+table.insert(pages[4], draw_screen_bugs);
+table.insert(pages[5], draw_clock);
+table.insert(pages[5], draw_timer);
+
+
+local function update_gloabls()
+    GAME_MODE = mainmemory.readbyte(mode_offset);
+    MAP_CURR =  read_string(map_curr_offset, 6);
+    MAP_NEXT = read_string(map_next_offset, 6);
+    DAY_CURR = mainmemory.readbyte(day_curr_offset);
+    HOUR_CURR = mainmemory.readbyte(hour_curr_offset);
+    MINUTE_CURR = mainmemory.readbyte(minute_curr_offset);
+    MINUTE_NEXT = mainmemory.readbyte(minute_next_offset);
+    FRAME_COUNT = mainmemory.read_s32_le(frame_count_offset);
+end;
 
 ---Main loop
 while true do
-    gui.defaultBackground("#0bffffff")
-    GAME_MODE = mainmemory.readbyte(mode_offset)
+    gui.defaultBackground("#ff000000")
+    gui.defaultForeground("#ffffffff")
     local t = joypad.get();
     if t["P1 R1"] == true then
         holdcount = holdcount + 1
@@ -684,8 +796,14 @@ while true do
             current_page = current_page + 1;
         end
     end
-    for index, value in ipairs(pages[current_page]) do
-        value();
+    update_gloabls()
+    if GAME_MODE ~= 0 then
+        for index, value in ipairs(pages[current_page]) do
+            value();
+            -- print(client.screenheight())
+            -- print(page_names[current_page - 1]);
+            gui.drawText(10, client.bufferheight()  - 15, page_names[current_page], nil, nil);
+        end
     end
     emu.frameadvance();
 end
