@@ -242,6 +242,7 @@ end;
 ---@param is_player boolean render on player side or opponent side
 local function draw_beetle_stat(beetle_stat, is_player)
     if GAME_MODE ~= 7 then
+        gui.drawText(22, 58, "Waiting for Sumo mode.")
         return;
     end
     local x;
@@ -282,6 +283,10 @@ end;
 
 ---Draw beetle stats for the boku and an opponent on screen
 local function draw_beetle_stats()
+    if GAME_MODE ~= 7 then
+        gui.drawText((client.bufferwidth() / 4), client.bufferheight()/2, "Waiting for Sumo mode.")
+        return;
+    end
     local beetle_stat;
     local offset = sumo_player_beetle_offset;
     local tmp = mainmemory.readbyte(offset);
@@ -733,38 +738,51 @@ end;
 ----------------------- Main
 
 local holdcount = 0
-local current_page = 1;
-local page_count = 5;
+local current_page = 0;
+local page_count = 6;
 local pages = {};
 local page_names = {};
-pages[1] = {};
-page_names[1] = "screen timer test"
-pages[2] = {};
-page_names[2] = "Sumo"
-pages[3] = {};
-page_names[3] = "Sumo inventories"
-pages[4] = {};
-page_names[4] = "Bugs On Screen"
-pages[5] = {};
-page_names[5] = "Screen Timer"
--- table.insert(pages[0], draw_clock);
--- table.insert(pages[0], draw_story_flags);
--- table.insert(pages[0], draw_beehive_status);
--- table.insert(pages[0], draw_tree_status);
--- table.insert(pages[0], draw_flower_status);
-table.insert(pages[1], draw_clock);
-table.insert(pages[1], draw_timer);
-table.insert(pages[2], draw_clock);
-table.insert(pages[2], draw_cdpos);
-table.insert(pages[2], draw_beetle_stats);
-table.insert(pages[2], draw_sumo_stats);
-table.insert(pages[3], draw_clock);
-table.insert(pages[3], draw_bug_inventories);
-table.insert(pages[3], draw_sumo_stats);
-table.insert(pages[4], draw_clock);
-table.insert(pages[4], draw_screen_bugs);
-table.insert(pages[5], draw_clock);
-table.insert(pages[5], draw_timer);
+
+page_names[0] = "Clock"
+local clock_page = {};
+table.insert(clock_page, draw_clock);
+pages[0] = clock_page;
+
+page_names[1] = "Story";
+local story_page = {};
+table.insert(story_page, draw_clock);
+table.insert(story_page, draw_story_flags);
+table.insert(story_page, draw_beehive_status);
+table.insert(story_page, draw_tree_status);
+table.insert(story_page, draw_flower_status);
+pages[1] = story_page;
+
+page_names[2] = "Bugs on Screen";
+local screen_bugs_page = {};
+table.insert(screen_bugs_page, draw_clock);
+table.insert(screen_bugs_page, draw_screen_bugs);
+pages[2] = screen_bugs_page;
+
+page_names[3] = "Screen Timer";
+local screen_timer_page = {};
+table.insert(screen_timer_page, draw_clock);
+table.insert(screen_timer_page, draw_timer);
+pages[3] = screen_timer_page;
+
+page_names[4] = "Sumo";
+local sumo_page = {};
+table.insert(sumo_page, draw_clock);
+-- table.insert(sumo_page, draw_cdpos);
+table.insert(sumo_page, draw_beetle_stats);
+table.insert(sumo_page, draw_sumo_stats);
+pages[4] = sumo_page;
+
+page_names[5] = "Sumo Inventories";
+local sumo_inv_page = {};
+table.insert(sumo_inv_page, draw_clock);
+table.insert(sumo_inv_page, draw_bug_inventories);
+table.insert(sumo_inv_page, draw_sumo_stats);
+pages[5] = sumo_inv_page;
 
 
 local function update_gloabls()
@@ -801,7 +819,7 @@ while true do
         for index, value in ipairs(pages[current_page]) do
             value();
             -- print(client.screenheight())
-            -- print(page_names[current_page - 1]);
+            -- print(page_names[current_page]);
             gui.drawText(10, client.bufferheight()  - 15, page_names[current_page], nil, nil);
         end
     end
