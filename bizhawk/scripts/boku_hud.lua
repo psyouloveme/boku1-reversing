@@ -1,6 +1,15 @@
--- Boku no Natsuyasumi Hud v2.0.0
+-- Boku no Natsuyasumi Hud v2.0.1
 -- by psyouloveme with help from Tedder
 -- Latest version is here https://github.com/psyouloveme/boku1-reversing/blob/master/bizhawk/scripts/boku_hud.lua
+
+print("Boku no Natsuyasumi Hud v2.0.1\n")
+print("Press Select to open the menu.")
+print("Press R1 to change pages.\n")
+print("This script expects the Octoshock PSX core, it might not work correctly using others.")
+print("If you need to change your PSX core go to:")
+print("  Config -> Preferred Cores -> For Consoles -> PSX -> Ocotoshock")
+print("Then close the game and open it again.")
+print("Get the latest version here: https://github.com/psyouloveme/boku1-reversing/blob/master/bizhawk/scripts/boku_hud.lua")
 
 ---do this dumb workaround to get typing for the global
 _G.mainmemory = _G.mainmemory
@@ -10,7 +19,7 @@ _G.joypad = _G.joypad
 _G.gui = _G.gui
 _G.client = _G.client
 
------------- constants ------------
+-- #region Constants
 local GameModeOffset = 0x237e0;
 local bugStructSize   = 0xc;
 -- arrays of 20
@@ -61,9 +70,11 @@ local FlowerWaterLevelOffset = 0x035E92;
 local FlowerBloomsOffset = 0x035E93;
 local FlowersWateredTodayOffset = 0x035E4E;
 -- bugs on screen
-local on_screen_bug_id = 0x028074;
-local on_screen_bug_struct_size = 0x58;
-local on_screen_bug_struct_count = 0xE;
+local on_screen_bug_count = 0x02806c;
+local on_screen_bug_id =     0x028074;
+local on_screen_bug_caught = 0x0280A4;
+local on_screen_bug_size = 0x0280A5;
+local on_screen_bug_struct_size = 0x58; 
 -- pausing
 -- 0 when not paused
 -- 1 when paused
@@ -120,8 +131,9 @@ local Mode = {
     Game = 5,
     Sumo = 7
 };
+-- #endregion
 
------------- globals ------------
+-- #region Globals
 
 --- game mode
 --- 3 = menu opening.
@@ -168,6 +180,8 @@ local TimeFreezeValue = nil;
 
 -- Global for timer reset
 local ResetOnScreenChange = false;
+
+-- #endregion
 
 
 local function BugIdToString(id)
@@ -710,33 +724,26 @@ local function DrawFlowersStatus()
 end
 
 local function DrawOnScreenBugs()
-    local bug_id = mainmemory.read_u16_le(on_screen_bug_id);
-    local bug_count = mainmemory.read_u16_le(0x02806c);
+    local bug_count = mainmemory.read_u16_le(on_screen_bug_count);
     local fontsize = 11;
     local x = 10;
     local y = 33;
     local y_stride = fontsize + 1;
     gui.drawText(x, y, "Bug count: " .. tostring(bug_count))
     y = y + y_stride;
-    -- x = x + 22
-    local bugs = {};
     for current_index = 0, bug_count-1, 1 do
-        bug_id = mainmemory.read_u16_le(on_screen_bug_id + (current_index * on_screen_bug_struct_size))
-        if bugs[bug_id] == nil then
-           bugs[bug_id] = 1
+        local bug_id = mainmemory.read_u16_le(on_screen_bug_id + (current_index * on_screen_bug_struct_size))
+        local bug_size = mainmemory.readbyte(on_screen_bug_size + (current_index * on_screen_bug_struct_size))
+        local bug_caught = mainmemory.readbyte(on_screen_bug_caught + (current_index * on_screen_bug_struct_size))
+        local bug_txt = BugIdToString(bug_id) .. " " .. tostring(bug_size) .. "mm"
+        if bug_caught > 0 then
+            bug_txt = "x " .. bug_txt
         else
-            bugs[bug_id] = bugs[bug_id] + 1
+            bug_txt = "  " .. bug_txt
         end
-    end
-
-    for bugid, value in pairs(bugs) do
-        if value > 1 then
-            gui.drawText(x, y, "  " .. BugIdToString(bugid) .. " (" .. value .. ")");
-        else
-            gui.drawText(x, y, "  " .. BugIdToString(bugid));
-        end
+        gui.drawText(x, y, bug_txt)
         y = y + y_stride;
-    end
+    end;
 end;
 
 local last_screen = nil;
@@ -1251,15 +1258,6 @@ local function HudMenuUpdateState()
     end;
 end;
 --#endregion
-
-print("Boku no Natsuyasumi Hud v2.0.0\n")
-print("The latest version is here: https://raw.githubusercontent.com/psyouloveme/boku1-reversing/refs/heads/master/bizhawk/scripts/boku_hud.lua\n")
-print("Press Select to open the menu.")
-print("Press R1 to change pages.\n")
-print("This script expects the Octoshock PSX core, it might not work correctly using others.")
-print("If you need to change your PSX core go to:")
-print("  Config -> Preferred Cores -> For Consoles -> PSX -> Ocotoshock")
-print("Then close the game and open it again.")
 
 ---Main loop
 while true do
